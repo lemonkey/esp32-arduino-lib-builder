@@ -19,3 +19,4 @@ sdkconfig
 sdkconfig.old
 version.txt
 dependencies.lock
+custom-arduino-esp32-build/
