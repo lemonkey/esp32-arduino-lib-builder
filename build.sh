@@ -1,4 +1,7 @@
 #!/bin/bash
+# 20250608: Added support for customizing the commit SHA for additional dependencies besides esp-idf and arduino-esp32.
+#
+# WARNING: Using `yes | ./build.sh <options` doesn't work. May still have to answer prompts during the build (can't let it run completely unattended).
 
 if ! [ -x "$(command -v python3)" ]; then
     echo "ERROR: python is not installed! Please install python first."
@@ -13,29 +16,45 @@ fi
 TARGET="all"
 BUILD_TYPE="all"
 SKIP_ENV=0
+SKIP_RAINMAKER_AND_INSIGHTS=0
 COPY_OUT=0
 if [ -z $DEPLOY_OUT ]; then
     DEPLOY_OUT=0
 fi
 
 function print_help() {
-    echo "Usage: build.sh [-s] [-A <arduino_branch>] [-I <idf_branch>] [-i <idf_commit>] [-c <path>] [-t <target>] [-b <build|menuconfig|idf_libs|copy_bootloader|mem_variant>] [config ...]"
+    echo "Usage: build.sh [-s <optional>] [-A <arduino_branch>] [-I <idf_branch>] [-i <idf_commit>] [-x <optional>] [-j <esp32-camera commit>] [-k <esp-dl commit>] [-l <esp-rainmaker commit>] [-m <esp-dsp commit>] [-n <esp-littlefs commit>] [-o <tinyusb commit>] [-d <optional>] [-c <path>] [-t <target>] [-b <build|menuconfig|idf_libs|copy_bootloader|mem_variant>] [config ...]"
     echo "       -s     Skip installing/updating of ESP-IDF and all components"
     echo "       -A     Set which branch of arduino-esp32 to be used for compilation"
     echo "       -I     Set which branch of ESP-IDF to be used for compilation"
     echo "       -i     Set which commit of ESP-IDF to be used for compilation"
+
+    # Added the following so that we don't always have to hardcode the commit SHAs for these dependencies. 20250608
+    # WARNING: If these commits aren't set as parameters, the hardcoded defaults in 
+    # update-components.sh will be used.
+    echo "       -x     Skip including esp-rainmaker (and insights) (may be necessary if using IDF v4.4.x as rainmaker has dependencies on v5)"
+    echo "       -j     Set which commit of esp32-camera to be used for compilation"
+    echo "       -k     Set which commit of esp-dl to be used for compilation"
+    echo "       -l     Set which commit of esp-rainmaker to be used for compilation"
+    echo "       -m     Set which commit of esp-dsp commit to be used for compilation"
+    echo "       -n     Set which commit of esp-littlefs commit to be used for compilation"
+    echo "       -o     Set which commit of tinyusb commit to be used for compilation"
+
     echo "       -d     Deploy the build to github arduino-esp32"
     echo "       -c     Set the arduino-esp32 folder to copy the result to. ex. '$HOME/Arduino/hardware/espressif/esp32'"
     echo "       -t     Set the build target(chip). ex. 'esp32s3'"
-    echo "       -b     Set the build type. ex. 'build' to build the project and prepare for uploading to a board"
+    echo "       -b     Set the build type <build|menuconfig|idf_libs|copy_bootloader|mem_variant> to build the project and prepare for uploading to a board"
     echo "       ...    Specify additional configs to be applied. ex. 'qio 80m' to compile for QIO Flash@80MHz. Requires -b"
     exit 1
 }
 
-while getopts ":A:I:i:c:t:b:sd" opt; do
+while getopts ":A:I:i:j:k:l:m:n:o:c:t:b:sxd" opt; do
     case ${opt} in
         s )
             SKIP_ENV=1
+            ;;
+        x )
+            SKIP_RAINMAKER_AND_INSIGHTS=1
             ;;
         d )
             DEPLOY_OUT=1
@@ -53,6 +72,26 @@ while getopts ":A:I:i:c:t:b:sd" opt; do
         i )
             export IDF_COMMIT="$OPTARG"
             ;;
+
+        j )
+            export CAMERA_COMMIT="$OPTARG"
+            ;;
+        k )
+            export DL_COMMIT="$OPTARG"
+            ;;
+        l )
+            export RAINMAKER_COMMIT="$OPTARG"
+            ;;
+        m )
+            export DSP_COMMIT="$OPTARG"
+            ;;
+        n )
+            export LITTLEFS_COMMIT="$OPTARG"
+            ;;
+        o )
+            export TINYUSB_COMMIT="$OPTARG"
+            ;;
+
         t )
             TARGET=$OPTARG
             ;;
@@ -80,16 +119,22 @@ done
 shift $((OPTIND -1))
 CONFIGS=$@
 
+# This is needed by update-components.sh
+export SKIP_RAINMAKER_AND_INSIGHTS
+
 if [ $SKIP_ENV -eq 0 ]; then
     echo "* Installing/Updating ESP-IDF and all components..."
     # update components from git
+    echo "> components"
     ./tools/update-components.sh
     if [ $? -ne 0 ]; then exit 1; fi
 
     # install esp-idf
+    echo "> esp-idf"
     source ./tools/install-esp-idf.sh
     if [ $? -ne 0 ]; then exit 1; fi
 else
+    echo "WARNING: Skipping installation and updating of ESP-IDF and all components"
     source ./tools/config.sh
 fi
 
@@ -122,6 +167,7 @@ if [ "$BUILD_TYPE" != "all" ]; then
     exit 0
 fi
 
+echo "Removing build, sdkconfig and out..."
 rm -rf build sdkconfig out
 
 # Add components version info
@@ -202,7 +248,7 @@ if [ "$BUILD_TYPE" = "all" ]; then
 fi
 
 # copy everything to arduino-esp32 installation
-if [ $COPY_OUT -eq 1 ] && [ -d "$ESP32_ARDUINO" ]; then
+if [ $COPY_OUT -eq 1 ] && [ -d "${ESP32_ARDUINO}" ]; then
     ./tools/copy-to-arduino.sh
 fi
 
