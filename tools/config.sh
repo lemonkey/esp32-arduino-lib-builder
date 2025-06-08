@@ -6,11 +6,15 @@ if [ -z $IDF_PATH ]; then
 fi
 
 if [ -z $IDF_BRANCH ]; then
-	IDF_BRANCH="release/v4.4"
+	# IDF_BRANCH="release/v4.4"
+	# lemonkey/esp-idf repo
+	IDF_BRANCH="feature/fws-1b16ef6cfc-4.4.2"
 fi
 
 if [ -z $AR_PR_TARGET_BRANCH ]; then
-	AR_PR_TARGET_BRANCH="release/v2.x"
+	# AR_PR_TARGET_BRANCH="release/v2.x"
+	# lemonkey/arduino-esp32 repo
+	AR_PR_TARGET_BRANCH="feature/fws-custom-55d608e3-2.0.5"
 fi
 
 if [ -z $IDF_TARGET ]; then
@@ -28,7 +32,8 @@ IDF_COMPS="$IDF_PATH/components"
 IDF_TOOLCHAIN="xtensa-$IDF_TARGET-elf"
 
 # Owner of the target ESP32 Arduino repository
-AR_USER="espressif"
+#AR_USER="espressif"
+AR_USER="lemonkey"
 
 # The full name of the repository
 AR_REPO="$AR_USER/arduino-esp32"
