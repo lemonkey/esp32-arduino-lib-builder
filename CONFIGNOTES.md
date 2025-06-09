@@ -403,10 +403,17 @@ NOTE: Bluetooth
 
 Key sdkconfigs to look into:
 
-  CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ CRITICAL (set this to 240 instead of 160)
-  CONFIG_BT_ENABLED CRITICAL (turn this off!)
-  CONFIG_PM_ENABLE CRITICAL (turn this off!)
-  CONFIG_LWIP_LOCAL_HOSTNAME CRITICAL (set this to actual hostname on boot)
+  DONE: CONFIG_ESP32_DEFAULT_CPU_FREQ_240 CRITICAL
+  DONE: CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ=240 CRITICAL
+  DONE: CONFIG_BT_ENABLED CRITICAL (turn this off!)
+  SKIP: (already off): CONFIG_PM_ENABLE CRITICAL (turn this off!)
+  DONE: CONFIG_ESP32_RTC_CLK_SRC_INT_8MD256 CRITICAL (more accurate internal clock)
+  DONE: CONFIG_MQTT_PROTOCOL_311=n CRITICAL
+  DONE: CONFIG_MQTT_TRANSPORT_SSL=n CRITICAL
+  DONE: CONFIG_MQTT_TRANSPORT_WEBSOCKET=n CRITICAL
+  DONE: CONFIG_MQTT_TRANSPORT_WEBSOCKET_SECURE=n CRITICAL
+
+  CONFIG_LWIP_LOCAL_HOSTNAME CRITICAL (set this to actual hostname on boot using specific function call that will overwrite this value)
 
   CONFIG_HEAP_TRACING_OFF CRITICAL
   CONFIG_HEAP_TASK_TRACKING CRITICAL
@@ -416,6 +423,9 @@ Key sdkconfigs to look into:
   CONFIG_ESP_EVENT_LOOP_PROFILING CRITICAL
   CONFIG_ESP_GDBSTUB_SUPPORT_TASKS CRITICAL
   CONFIG_LWIP_MAX_SOCKETS CRITICAL
+
+  CONFIG_UNITY_ENABLE_COLOR
+  CONFIG_UNITY_ENABLE_BACKTRACE_ON_FAIL
 
   CONFIG_BOOTLOADER_WDT_TIME_MS
   CONFIG_COMPILER_CXX_EXCEPTIONS
@@ -434,10 +444,6 @@ Key sdkconfigs to look into:
   CONFIG_LOG_COLORS
   CONFIG_LWIP_DEBUG 
 
-
-
-
-
 Other configs to look into later:
   - CONFIG_COMPILER_STACK_CHECK_MODE
   - CONFIG_COMPILER_DISABLE_DEFAULT_ERRORS
@@ -451,4 +457,63 @@ Other configs to look into later:
   - CONFIG_ESP_WIFI_SLP_DEFAULT_MAX_ACTIVE_TIME
   - CONFIG_LWIP_DHCPS
 
+* 8:05PM With the original sdkconfig copied from arudino-esp32 from the feature/fws-custom-55d608e3-2.0.5 branch and after we removed rainmaker and camera configs, the following changes were made:
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  DONE: CONFIG_ESP32_DEFAULT_CPU_FREQ_240
+  DONE: CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ=240
+  DONE: CONFIG_BT_ENABLED=n
+  SKIP: CONFIG_PM_ENABLE=n (already disabled)
+  DONE: CONFIG_LOG_COLORS=y
+  DONE: CONFIG_ESP32_RTC_CLK_SRC_INT_8MD256 (more accurate internal clock; currently CONFIG_ESP32_RTC_CLK_SRC_INT_RC)
+  DONE: CONFIG_MQTT_PROTOCOL_311=n
+  DONE: CONFIG_MQTT_TRANSPORT_SSL=n
+  DONE: CONFIG_MQTT_TRANSPORT_WEBSOCKET=n
+  DONE: CONFIG_MQTT_TRANSPORT_WEBSOCKET_SECURE=n
+  DONE: Disable the following Arduino libraries:
+  - AzureIoT (CONFIG_ARDUINO_SELECTIVE_AzureIoT)
+  - BLE (CONFIG_ARDUINO_SELECTIVE_BLE)
+  - BluetoothSerial (CONFIG_ARDUINO_SELECTIVE_BluetoothSerial)
+  - SimpleBLE (CONFIG_ARDUINO_SELECTIVE_SimpleBLE)
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+WARNING: Even after removing rainmkr config, it comes back for some reason after copying our custom sdkconfig over defconfig.common.
+
+Copying our custom edited sdkconfig over the one in the root for the lib builder as well.
+
+Rmaker configs still appear. It may be coming in from IDF perhaps???
+
+NOTE: Under "Include only specific Arduino libraries" you can specify which specific Arduino libraries should be included.
+  - we're locking these versions in our platformio.ini file while also setting board_build.arduino.upstream_packages = no.
+
+    ArduinoOTA @ 2.0.0
+    Update @ 2.0.0                                                                ; for OTA
+    HTTPClient @ 2.0.0
+    Preferences @ 2.0.0
+    Print @ 0.0.0
+    FS @ 2.0.0                                                                    ; for file system
+    SPIFFS @ 2.0.0                                                                ; for file system
+    ESPmDNS	@ 2.0.0                                                               ; for WIFI
+    WiFi @ 2.0.0
+    WiFiClientSecure @ 2.0.0
+    Wire @ 2.0.0                                                                  ; for I2C
+    SPI @ 2.0.0  
+
+Excluding the following in sdkconfig as we know we don't need them (could make things a little smaller in the end):
+  - AzureIoT (CONFIG_ARDUINO_SELECTIVE_AzureIoT)
+  - BLE (CONFIG_ARDUINO_SELECTIVE_BLE)
+  - BluetoothSerial (CONFIG_ARDUINO_SELECTIVE_BluetoothSerial)
+  - SimpleBLE (CONFIG_ARDUINO_SELECTIVE_SimpleBLE)
+
+These are shown in the configs that start with `CONFIG_ARDUINO_SELECTIVE_`.
+
+After modifying sdkconfig via menuconfig, copied sdkconfig over configs/defconfig.common.
+
+We already backed it up along with defconfig.esp32 before wiping defconfig.esp32.
+
+Generating a new build without passing `-b menuconfig`.
+
+Had to delete esp-rainmakr from components as it came back.
+
+New build was successful.
 

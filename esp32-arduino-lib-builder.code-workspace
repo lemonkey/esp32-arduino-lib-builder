@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../arduino-esp32"
+		}
+	],
+	"settings": {}
+}
