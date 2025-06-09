@@ -1,6 +1,9 @@
 #/bin/bash
 # 20250608: Added default commits and ability to skip rainmaker.
 
+echo "SKIP_RAINMAKER_AND_INSIGHTS [${SKIP_RAINMAKER_AND_INSIGHTS}]"
+echo "SKIP_CAMERA [${SKIP_CAMERA}]"
+
 source ./tools/config.sh
 
 # NOTE: None of these were forked for lemonkey 20250607
@@ -25,6 +28,7 @@ source ./tools/config.sh
 # Comment out the default commits if you want to use the latest versions off master.
 # And if you created a fork, replace the repo URLs below.
 
+# WARNING: If `SKIP_CAMERA` is set to 1, esp-camera won't be built.
 CAMERA_REPO_URL="https://github.com/espressif/esp32-camera.git"
 # `-j` build.sh parameter
 CAMERA_DEFAULT_COMMIT="5611989"
@@ -110,28 +114,32 @@ if [ $? -ne 0 ]; then exit 1; fi
 #
 # CLONE/UPDATE ESP32-CAMERA
 #
-echo "Updating ESP32 Camera..."
-if [ ! -d "$AR_COMPS/esp32-camera" ]; then
-	echo "Cloning esp32-camera for the first time!"
-	git clone $CAMERA_REPO_URL "$AR_COMPS/esp32-camera"
-else
-	echo "esp32-camera repo has already been cloned."
-fi
-echo "Fetching..."
-git -C "$AR_COMPS/esp32-camera" fetch
-if [ ! -z "${CAMERA_COMMIT}" ]; then 
-	echo "Using given commit [${CAMERA_COMMIT}]"
-	git -C "$AR_COMPS/esp32-camera" checkout "${CAMERA_COMMIT}"
-else
-	if [ ! -z "${CAMERA_DEFAULT_COMMIT}" ]; then 
-		echo "Using hardcoded commit [${CAMERA_DEFAULT_COMMIT}]"
-		git -C "$AR_COMPS/esp32-camera" checkout "${CAMERA_DEFAULT_COMMIT}"
-	else 
-		echo "Pulling latest from repo (no commit specified)..."
-		git -C "$AR_COMPS/esp32-camera" pull --ff-only
+if [ $SKIP_CAMERA -ne 1 ]; then
+	echo "Updating ESP32 Camera..."
+	if [ ! -d "$AR_COMPS/esp32-camera" ]; then
+		echo "Cloning esp32-camera for the first time!"
+		git clone $CAMERA_REPO_URL "$AR_COMPS/esp32-camera"
+	else
+		echo "esp32-camera repo has already been cloned."
 	fi
+	echo "Fetching..."
+	git -C "$AR_COMPS/esp32-camera" fetch
+	if [ ! -z "${CAMERA_COMMIT}" ]; then 
+		echo "Using given commit [${CAMERA_COMMIT}]"
+		git -C "$AR_COMPS/esp32-camera" checkout "${CAMERA_COMMIT}"
+	else
+		if [ ! -z "${CAMERA_DEFAULT_COMMIT}" ]; then 
+			echo "Using hardcoded commit [${CAMERA_DEFAULT_COMMIT}]"
+			git -C "$AR_COMPS/esp32-camera" checkout "${CAMERA_DEFAULT_COMMIT}"
+		else 
+			echo "Pulling latest from repo (no commit specified)..."
+			git -C "$AR_COMPS/esp32-camera" pull --ff-only
+		fi
+	fi
+	if [ $? -ne 0 ]; then exit 1; fi
+else
+	echo "Skipping esp-camera!"
 fi
-if [ $? -ne 0 ]; then exit 1; fi
 
 #
 # CLONE/UPDATE ESP-DL
@@ -214,10 +222,10 @@ if [ $SKIP_RAINMAKER_AND_INSIGHTS -ne 1 ]; then
 	fi
 	echo "Updating esp-rainmaker submodule..."
 	git -C "$AR_COMPS/esp-rainmaker" submodule update --init --recursive
+	if [ $? -ne 0 ]; then exit 1; fi
 else
 	echo "Skipping esp-rainmaker and insights!"
 fi
-if [ $? -ne 0 ]; then exit 1; fi
 
 #
 # CLONE/UPDATE ESP-DSP
