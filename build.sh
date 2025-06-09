@@ -2,6 +2,83 @@
 # 20250608: Added support for customizing the commit SHA for additional dependencies besides esp-idf and arduino-esp32.
 #
 # WARNING: Using `yes | ./build.sh <options` doesn't work. May still have to answer prompts during the build (can't let it run completely unattended).
+#
+# Examples:
+#   - With esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -j 5611989 -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/psicom/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
+#   - Without esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/psicom/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
+#
+# ################################
+# About using `menuconfig`
+# ################################
+# See also https://mm.kno.wled.ge/advanced/compile-arduino-esp32/.
+#
+# Add `-b menuconfig` to configure sdkconfig as part of the build and set all the configuration options.
+#
+# After saving, this will create an sdkconfig in the root of esp32-arduino-lib-builder.
+#
+# WARNING: This file is functionally useless because the build system will use configs/defconfig.common with configs/defconfig.esp32 
+# and then add your sdkconfig file - which means most of your modifications will be overwritten by the defaults and we do not want that.
+#
+# To get your new build to use your menuconfig created build file, change to your esp32-arduino-lib-builder folder and do:
+#   `cd configs`
+#   `cp defconfig.common defconfig.common.org` to make a backup
+#   `cp defconfig.esp32 defconfig.esp32.org` to make a backup
+#   `rm defconfig.esp32` to get rid of the S3 defaults
+#   `touch defconfig.esp32` to make a blank file so nothing complains during the build
+#   `cp ../sdkconfig defconfig.common` to put your options into the build file
+#
+# NOTE: The above can also be used to start with the version of sdkconfig we're currently using before customizing arduino-esp32 by copying
+# it over the sdkconfig at the repo root before copying it over defconfig.common.
+#
+# WARNING: This version of sdkconfig was when it was built with esp-camera and esp-rainmaker (along with insights). Should remove 
+# those settings first.
+#
+# WARNING: You'll still end up seeing "ESP RainMaker" config when using `-b menuconfig`. Probably harmless.
+#
+# Then run build.sh with the parameters you previously used, BUT WITHOUT `-b menuconfig`.
+#
+# This should build the ESP32 build with your options and copy it into the correct spot in /path/to/your/arduino-esp32/.
+#
+# There are other ways to do this, but with this method your previous choices are reflected as the default options when you run menuconfig again.
+#
+# NOTE: You could make a blank defconfig.common file and cp ../sdkconfig defconfig.esp32 if you want to make different board configs with menuconfig.
+#
+# In order to undo this if you things aren't working and you can't remember which options you changed, just:
+#       `cp defconfig.common.org defconfig.common`
+#       `cp defconfig.esp32.org defconfig.esp32`
+#
+# and then menuconfig will start with the original "sane" defaults again.
+#
+####################################################
+# Deploying the custom built arduino-esp32 library
+####################################################
+# The main thing is to commit the changes made to the arduino-esp32 library to your own fork of the library.
+#
+# It won't be a complete mirror of the actual fork. It will only contain changes relative to what you just built (it won't have board definitions, etc.)
+#
+# After committing and pushing the changes to the arduino-esp32 fork, note the commit SHA and update the platform_packages entry in platformio.ini.
+# 
+# platform_packages =
+#   framework-arduinoespressif32 @ https://github.com/lemonkey/arduino-esp32.git#55d608e3
+#   board_build.arduino.upstream_packages = no
+#
+# WARNING: `board_build.arduino.upstream_packages = no` is important since we don't want
+# PlatformIO to fetch missing libraries from the upstream Arduino library server.
+# We want PlatformIO to only use the libraries provided by the specific platform it is using. 
+# This can be useful if you want to isolate dependencies or have conflicts with the 
+# platform-specific library versions. 
+#
+# NOTE: "If you change the underlying IDF version used with the custom arduino-esp32 library, ... 
+# you can edit arduino-esp32/package.json with the correct version of arduino-esp32 for your IDF 
+# (with IDF v4.4.6 it should be 2.0.14, for example), or whatever custom version you want it to be."
+#
+# You can figure out the IDF to arduino-esp32 version mapping by looking thru https://github.com/espressif/arduino-esp32/releases 
+# if you really want everything to be correct, even if it doesn't actually matter in your actual build in PIO.
+#
+# NOTE: For now we plan on using a branch for the arduino-esp32 repo `feature/fws-custom-55d608e3-2.0.5` that is based off of the original `2.0.5` tag 
+# where `55d608e3` was the commit SHA at that time.
+#
+# See CONFIGNOTES.md for more about what changes we've made to sdkconfig.
 
 if ! [ -x "$(command -v python3)" ]; then
     echo "ERROR: python is not installed! Please install python first."
@@ -16,6 +93,7 @@ fi
 TARGET="all"
 BUILD_TYPE="all"
 SKIP_ENV=0
+SKIP_CAMERA=0
 SKIP_RAINMAKER_AND_INSIGHTS=0
 COPY_OUT=0
 if [ -z $DEPLOY_OUT ]; then
@@ -23,7 +101,7 @@ if [ -z $DEPLOY_OUT ]; then
 fi
 
 function print_help() {
-    echo "Usage: build.sh [-s <optional>] [-A <arduino_branch>] [-I <idf_branch>] [-i <idf_commit>] [-x <optional>] [-j <esp32-camera commit>] [-k <esp-dl commit>] [-l <esp-rainmaker commit>] [-m <esp-dsp commit>] [-n <esp-littlefs commit>] [-o <tinyusb commit>] [-d <optional>] [-c <path>] [-t <target>] [-b <build|menuconfig|idf_libs|copy_bootloader|mem_variant>] [config ...]"
+    echo "Usage: build.sh [-s <optional>] [-A <arduino_branch>] [-I <idf_branch>] [-i <idf_commit>] [-x <optional>] [-y <optional>] [-j <esp32-camera commit>] [-k <esp-dl commit>] [-l <esp-rainmaker commit>] [-m <esp-dsp commit>] [-n <esp-littlefs commit>] [-o <tinyusb commit>] [-d <optional>] [-c <path>] [-t <target>] [-b <build|menuconfig|idf_libs|copy_bootloader|mem_variant>] [config ...]"
     echo "       -s     Skip installing/updating of ESP-IDF and all components"
     echo "       -A     Set which branch of arduino-esp32 to be used for compilation"
     echo "       -I     Set which branch of ESP-IDF to be used for compilation"
@@ -33,7 +111,8 @@ function print_help() {
     # WARNING: If these commits aren't set as parameters, the hardcoded defaults in 
     # update-components.sh will be used.
     echo "       -x     Skip including esp-rainmaker (and insights) (may be necessary if using IDF v4.4.x as rainmaker has dependencies on v5)"
-    echo "       -j     Set which commit of esp32-camera to be used for compilation"
+    echo "       -y     Skip including esp-camera"
+    echo "       -j     Set which commit of esp32-camera to be used for compilation (ignored if -y is used)"
     echo "       -k     Set which commit of esp-dl to be used for compilation"
     echo "       -l     Set which commit of esp-rainmaker to be used for compilation"
     echo "       -m     Set which commit of esp-dsp commit to be used for compilation"
@@ -48,13 +127,16 @@ function print_help() {
     exit 1
 }
 
-while getopts ":A:I:i:j:k:l:m:n:o:c:t:b:sxd" opt; do
+while getopts ":A:I:i:j:k:l:m:n:o:c:t:b:sxyd" opt; do
     case ${opt} in
         s )
             SKIP_ENV=1
             ;;
         x )
             SKIP_RAINMAKER_AND_INSIGHTS=1
+            ;;
+        y )
+            SKIP_CAMERA=1
             ;;
         d )
             DEPLOY_OUT=1
@@ -119,8 +201,12 @@ done
 shift $((OPTIND -1))
 CONFIGS=$@
 
+echo "SKIP_RAINMAKER_AND_INSIGHTS [${SKIP_RAINMAKER_AND_INSIGHTS}]"
+echo "SKIP_CAMERA [${SKIP_CAMERA}]"
+
 # This is needed by update-components.sh
 export SKIP_RAINMAKER_AND_INSIGHTS
+export SKIP_CAMERA
 
 if [ $SKIP_ENV -eq 0 ]; then
     echo "* Installing/Updating ESP-IDF and all components..."
