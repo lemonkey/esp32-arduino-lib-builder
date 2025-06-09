@@ -1,11 +1,13 @@
 #!/bin/bash
 # 20250608: Added support for customizing the commit SHA for additional dependencies besides esp-idf and arduino-esp32.
+# 20250608: Also added support for specifying a specific commit SHA for arduino-esp32 to be used as the basis for building the custom version of the library.
 #
 # WARNING: Using `yes | ./build.sh <options` doesn't work. May still have to answer prompts during the build (can't let it run completely unattended).
 #
 # Examples:
 #   - With esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -j 5611989 -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
 #   - Without esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
+#   - Without esp-camera and without rainmaker using branch and commit for arduino-esp32: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -a 55d608e3 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
 #
 # ################################
 # About using `menuconfig`
@@ -101,9 +103,10 @@ if [ -z $DEPLOY_OUT ]; then
 fi
 
 function print_help() {
-    echo "Usage: build.sh [-s <optional>] [-A <arduino_branch>] [-I <idf_branch>] [-i <idf_commit>] [-x <optional>] [-y <optional>] [-j <esp32-camera commit>] [-k <esp-dl commit>] [-l <esp-rainmaker commit>] [-m <esp-dsp commit>] [-n <esp-littlefs commit>] [-o <tinyusb commit>] [-d <optional>] [-c <path>] [-t <target>] [-b <build|menuconfig|idf_libs|copy_bootloader|mem_variant>] [config ...]"
+    echo "Usage: build.sh [-s <optional>] [-A <arduino_branch>] [-a <arduino_commit>] [-I <idf_branch>] [-i <idf_commit>] [-x <optional>] [-y <optional>] [-j <esp32-camera commit>] [-k <esp-dl commit>] [-l <esp-rainmaker commit>] [-m <esp-dsp commit>] [-n <esp-littlefs commit>] [-o <tinyusb commit>] [-d <optional>] [-c <path>] [-t <target>] [-b <build|menuconfig|idf_libs|copy_bootloader|mem_variant>] [config ...]"
     echo "       -s     Skip installing/updating of ESP-IDF and all components"
-    echo "       -A     Set which branch of arduino-esp32 to be used for compilation"
+    echo "       -A     Set which branch of arduino-esp32 to be used for compilation (will override commit if given)"
+    echo "       -a     Set which commit of arduino-esp32 to be used for compilation (ignored if branch given)"
     echo "       -I     Set which branch of ESP-IDF to be used for compilation"
     echo "       -i     Set which commit of ESP-IDF to be used for compilation"
 
@@ -127,7 +130,7 @@ function print_help() {
     exit 1
 }
 
-while getopts ":A:I:i:j:k:l:m:n:o:c:t:b:sxyd" opt; do
+while getopts ":A:a:I:i:j:k:l:m:n:o:c:t:b:sxyd" opt; do
     case ${opt} in
         s )
             SKIP_ENV=1
@@ -147,6 +150,9 @@ while getopts ":A:I:i:j:k:l:m:n:o:c:t:b:sxyd" opt; do
             ;;
         A )
             export AR_BRANCH="$OPTARG"
+            ;;
+        a )
+            export AR_COMMIT="$OPTARG"
             ;;
         I )
             export IDF_BRANCH="$OPTARG"

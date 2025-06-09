@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# 20250608: Updated defaults for our fork and fixed awk for macos.
 
 if [ -z $IDF_PATH ]; then
 	export IDF_PATH="$PWD/esp-idf"
@@ -79,6 +79,7 @@ AR_OS=`get_os`
 
 export SED="sed"
 export SSTAT="stat -c %s"
+export AWK="awk"
 
 if [[ "$AR_OS" == "macos" ]]; then
 	if ! [ -x "$(command -v gsed)" ]; then
@@ -91,6 +92,7 @@ if [[ "$AR_OS" == "macos" ]]; then
 	fi
 	export SED="gsed"
 	export SSTAT="stat -f %z"
+	export AWK="gawk"
 fi
 
 function git_commit_exists(){ #git_commit_exists <repo-path> <commit-message>

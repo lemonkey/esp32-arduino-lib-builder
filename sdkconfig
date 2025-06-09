@@ -217,11 +217,6 @@ CONFIG_ARDUINO_SELECTIVE_Wire=y
 # end of Arduino Configuration
 
 #
-# Arduino TinyUSB
-#
-# end of Arduino TinyUSB
-
-#
 # Compiler options
 #
 # CONFIG_COMPILER_OPTIMIZATION_DEFAULT is not set

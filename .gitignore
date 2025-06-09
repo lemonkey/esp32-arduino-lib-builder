@@ -1,15 +1,7 @@
 .DS_Store
 .vscode
 managed_components/
-components/arduino/
-components/esp-dl/
-components/esp-sr/
-components/esp32-camera/
-components/esp_littlefs/
-components/esp-rainmaker/
-components/espressif__esp-dsp/
-components/esp-insights/
-components/arduino_tinyusb/tinyusb/
+components/
 esp-idf/
 out/
 build/

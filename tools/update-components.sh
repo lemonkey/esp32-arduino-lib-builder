@@ -1,5 +1,5 @@
 #/bin/bash
-# 20250608: Added default commits and ability to skip rainmaker.
+# 20250608: Added default commits and ability to skip rainmaker. Also added support for checking out a specific commit for arduino-esp32.
 
 echo "SKIP_RAINMAKER_AND_INSIGHTS [${SKIP_RAINMAKER_AND_INSIGHTS}]"
 echo "SKIP_CAMERA [${SKIP_CAMERA}]"
@@ -104,10 +104,17 @@ else
 fi
 
 if [ "$AR_BRANCH" ]; then
-	echo "Checking out branch [${AR_BRANCH}] for [${AR_REPO_URL}] and pulling latest..."
+	echo "Checking out branch [${AR_BRANCH}] for [${AR_REPO_URL}] and pulling LATEST commits..."
 	git -C "$AR_COMPS/arduino" checkout "$AR_BRANCH" && \
 	git -C "$AR_COMPS/arduino" fetch && \
 	git -C "$AR_COMPS/arduino" pull --ff-only
+	if [ "$AR_COMMIT" ]; then
+		echo "Checking out commit [${AR_COMMIT}] for [${AR_REPO_URL}]..."
+		git -C "$AR_COMPS/arduino" checkout "$AR_COMMIT"
+	fi
+else
+	echo "ERROR: Branch for Arduino required!"
+	exit 1
 fi
 if [ $? -ne 0 ]; then exit 1; fi
 

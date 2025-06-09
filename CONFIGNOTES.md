@@ -517,3 +517,82 @@ Had to delete esp-rainmakr from components as it came back.
 
 New build was successful.
 
+WARNING: Generated version of platform-build-esp32.py is incomplete???
+
+Is there something wrong with /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/tools/copy-libs.sh (starting on line 276)?
+
+copy-libs.sh is called by /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/CMakeLists.txt
+
+Is there a problem with macos gawk that we had to install via homebrew initially?
+
+Beginning of call to copy-libs.sh in build log:
+==============
+[1280/1280] Generating idf_libs
+IDF_TARGET: esp32, MEMCONF: qio_qspi, PWD: /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder, OUT: /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/out/tools/sdk/esp32
+
+Renaming 'mbedtls' to 'mbedtls_2': /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/build/esp-idf/mbedtls/mbedtls/library/libmbedtls.a
+awk: syntax error at source line 1
+ context is
+         >>> /ASFLAGS=\[/{n++}{print>n"pio_start.txt" <<< 
+awk: illegal statement at source line 1
+awk: syntax error at source line 1
+ context is
+         >>> /"ARDUINO_ARCH_ESP32"/{n++}{print>n"pio_end.txt" <<< 
+awk: illegal statement at source line 1
+cat: pio_start.txt: No such file or directory
+rm: pio_end.txt: No such file or directory
+rm: 1pio_start.txt: No such file or directory
+rm: pio_start.txt: No such file or directory
+cat: 1pio_end.txt: No such file or directory
+rm: 1pio_end.txt: No such file or directory
+awk: syntax error at source line 1
+ context is
+         >>> /compiler.cpreprocessor.flags.esp32=/{n++}{print>n"platform_start.txt" <<< 
+awk: illegal statement at source line 1
+gsed: can't read 1platform_start.txt: No such file or directory
+awk: syntax error at source line 1
+ context is
+         >>> /compiler.ar.flags.esp32=/{n++}{print>n"platform_mid.txt" <<< 
+awk: illegal statement at source line 1
+cat: platform_start.txt: No such file or directory
+cat: 1platform_mid.txt: No such file or directory  
+==============
+
+WARNING: There is definitely a problem with awk...
+
+NOTE: there is an empty pio_start.txt file at the root of the lib builder repo.
+
+After patching copy-libs.sh to use the required gawk instead of awk when on macos, still have an error:
+
+===========
+[1280/1280] Generating idf_libs
+IDF_TARGET: esp32, MEMCONF: qio_qspi, PWD: /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder, OUT: /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/out/tools/sdk/esp32
+Renaming 'mbedtls' to 'mbedtls_2': /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/build/esp-idf/mbedtls/mbedtls/library/libmbedtls.a
+cat: 1pio_end.txt: No such file or directory
+rm: 1pio_end.txt: No such file or directory
+cat: platform_start.txt: No such file or directory
+cat: 1platform_mid.txt: No such file or directory
+===========
+
+WARNING: The version of arduino that was checked out and compiled under ./components/arduino has the bad version of the platformio-build-esp32.py file that is used as the basis for the copy-libs.sh awk command!
+
+See: components/arduino/tools/platformio-build-esp32.py
+
+The other targets are ok (esp32c2, s3, c2).
+
+What happened??? 
+
+It's ultimately coming from our arduino-esp32 fork with branch feature/fws-custom-55d608e3-2.0.5 and commit 55d608e3.
+
+https://github.com/lemonkey/arduino-esp32/tree/55d608e322443b7ac080b0ab62d5a93f26d2212f
+
+The file is NOT corrupt in that version of the commit: https://github.com/lemonkey/arduino-esp32/blob/55d608e322443b7ac080b0ab62d5a93f26d2212f/tools/platformio-build-esp32.py
+
+One problem is how we're not specifying a commit SHA for the arduino-esp32 library when building. It currently only
+supports a branch, but now that branch has a bad version of the platformio-build-esp32.py.
+
+Fixing...
+
+Deleting everything under components and building with new switch that specifies commit to use for arduino-esp32.
+
+`./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -a 55d608e3 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
