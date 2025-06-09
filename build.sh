@@ -4,8 +4,8 @@
 # WARNING: Using `yes | ./build.sh <options` doesn't work. May still have to answer prompts during the build (can't let it run completely unattended).
 #
 # Examples:
-#   - With esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -j 5611989 -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/psicom/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
-#   - Without esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/psicom/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
+#   - With esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -j 5611989 -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
+#   - Without esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
 #
 # ################################
 # About using `menuconfig`

@@ -2,7 +2,7 @@
 
 * 4:34PM Was able to invoke the menuconfig GUI with the following:
 
-  `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -j 5611989 -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/psicom/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32 -b menuconfig`
+  `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -j 5611989 -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32 -b menuconfig`
 
   - Top level menu items:
 
