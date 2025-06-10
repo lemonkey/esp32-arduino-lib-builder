@@ -8,6 +8,9 @@
 #   - With esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -j 5611989 -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
 #   - Without esp-camera and without rainmaker: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
 #   - Without esp-camera and without rainmaker using branch and commit for arduino-esp32: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -a 55d608e3 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/Source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build -t esp32`
+#   - Using path to our fork instead of local dir: `./build.sh -I feature/fws-custom-1b16ef6cfc-4.4.2 -i 1b16ef6 -A feature/fws-custom-55d608e3-2.0.5 -a b0054d2 -x -y -k f3006d7 -m 401faf8 -n 485a037 -o 111515a29 -c /Users/lemonkey/source/_3rd/arduino-esp32 -t esp32`
+#
+# NOTE: `b0054d2` has fixed version of platformio build script and we should use this version going forward. 20250609
 #
 # ################################
 # About using `menuconfig`
@@ -207,15 +210,16 @@ done
 shift $((OPTIND -1))
 CONFIGS=$@
 
-echo "SKIP_RAINMAKER_AND_INSIGHTS [${SKIP_RAINMAKER_AND_INSIGHTS}]"
-echo "SKIP_CAMERA [${SKIP_CAMERA}]"
-
-# This is needed by update-components.sh
-export SKIP_RAINMAKER_AND_INSIGHTS
-export SKIP_CAMERA
-
 if [ $SKIP_ENV -eq 0 ]; then
     echo "* Installing/Updating ESP-IDF and all components..."
+
+    echo "SKIP_RAINMAKER_AND_INSIGHTS [${SKIP_RAINMAKER_AND_INSIGHTS}]"
+    echo "SKIP_CAMERA [${SKIP_CAMERA}]"
+
+    # This is needed by update-components.sh
+    export SKIP_RAINMAKER_AND_INSIGHTS
+    export SKIP_CAMERA
+
     # update components from git
     echo "> components"
     ./tools/update-components.sh
