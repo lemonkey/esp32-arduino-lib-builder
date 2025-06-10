@@ -28,7 +28,7 @@ source ./tools/config.sh
 # Comment out the default commits if you want to use the latest versions off master.
 # And if you created a fork, replace the repo URLs below.
 
-# WARNING: If `SKIP_CAMERA` is set to 1, esp-camera won't be built.
+# WARNING: If `SKIP_CAMERA` is set to 1 (via -y switch), esp-camera won't be built.
 CAMERA_REPO_URL="https://github.com/espressif/esp32-camera.git"
 # `-j` build.sh parameter
 CAMERA_DEFAULT_COMMIT="5611989"
