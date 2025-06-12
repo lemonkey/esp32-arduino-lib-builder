@@ -108,8 +108,8 @@ fi
 function print_help() {
     echo "Usage: build.sh [-s <optional>] [-A <arduino_branch>] [-a <arduino_commit>] [-I <idf_branch>] [-i <idf_commit>] [-x <optional>] [-y <optional>] [-j <esp32-camera commit>] [-k <esp-dl commit>] [-l <esp-rainmaker commit>] [-m <esp-dsp commit>] [-n <esp-littlefs commit>] [-o <tinyusb commit>] [-d <optional>] [-c <path>] [-t <target>] [-b <build|menuconfig|idf_libs|copy_bootloader|mem_variant>] [config ...]"
     echo "       -s     Skip installing/updating of ESP-IDF and all components"
-    echo "       -A     Set which branch of arduino-esp32 to be used for compilation (will override commit if given)"
-    echo "       -a     Set which commit of arduino-esp32 to be used for compilation (ignored if branch given)"
+    echo "       -A     Set which branch of arduino-esp32 to be used for compilation (required if not using -s)"
+    echo "       -a     Set which commit of arduino-esp32 to be used for compilation (optional)"
     echo "       -I     Set which branch of ESP-IDF to be used for compilation"
     echo "       -i     Set which commit of ESP-IDF to be used for compilation"
 
@@ -232,6 +232,9 @@ if [ $SKIP_ENV -eq 0 ]; then
 else
     echo "WARNING: Skipping installation and updating of ESP-IDF and all components"
     source ./tools/config.sh
+
+    # This is necessary or else idf.py comment further below will fail. 20250611
+    source $IDF_PATH/export.sh
 fi
 
 if [ "$BUILD_TYPE" != "all" ]; then

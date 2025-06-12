@@ -109,7 +109,7 @@ if [ "$AR_BRANCH" ]; then
 	git -C "$AR_COMPS/arduino" fetch && \
 	git -C "$AR_COMPS/arduino" pull --ff-only
 	if [ "$AR_COMMIT" ]; then
-		echo "Checking out commit [${AR_COMMIT}] for [${AR_REPO_URL}]..."
+		echo "Checking out specific commit [${AR_COMMIT}] for [${AR_REPO_URL}]..."
 		git -C "$AR_COMPS/arduino" checkout "$AR_COMMIT"
 	fi
 else
