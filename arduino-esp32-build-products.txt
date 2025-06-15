@@ -2099,9 +2099,6 @@
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_serial_slave_link/include/esp_serial_slave_link/essl_spi.h -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_serial_slave_link/include/esp_serial_slave_link/essl_spi.h
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_serial_slave_link/include/esp_serial_slave_link/essl.h -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_serial_slave_link/include/esp_serial_slave_link/essl.h
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_serial_slave_link/include/esp_serial_slave_link/essl_sdio.h -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_serial_slave_link/include/esp_serial_slave_link/essl_sdio.h
-/Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_https_server -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_https_server
-/Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_https_server/include -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_https_server/include
-/Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_https_server/include/esp_https_server.h -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_https_server/include/esp_https_server.h
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_rom -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_rom
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_rom/include -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_rom/include
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/include/esp_rom/include/esp_rom_uart.h -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/include/esp_rom/include/esp_rom_uart.h
@@ -2448,7 +2445,6 @@
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/lib/libmbedcrypto.a -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/lib/libmbedcrypto.a
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/lib/libefuse.a -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/lib/libefuse.a
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/lib/libunity.a -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/lib/libunity.a
-/Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/lib/libesp_https_server.a -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/lib/libesp_https_server.a
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/lib/libespnow.a -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/lib/libespnow.a
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/lib/libesp_ipc.a -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/lib/libesp_ipc.a
 /Users/psicom/source/_3rd/esp32-arduino-lib-builder/custom-arduino-esp32-build/./tools/esp32/lib/libnvs_flash.a -> /Users/psicom/source/_3rd/arduino-esp32/./tools/esp32/lib/libnvs_flash.a
