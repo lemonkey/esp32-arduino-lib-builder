@@ -1,68 +1,216 @@
 diff --git a/tools/esp32/dio_qspi/include/sdkconfig.h b/tools/esp32/dio_qspi/include/sdkconfig.h
-index 1c08cd6e..c8132e28 100644
+index 95a868ad..c436a9a5 100644
 --- a/tools/esp32/dio_qspi/include/sdkconfig.h
 +++ b/tools/esp32/dio_qspi/include/sdkconfig.h
-@@ -15,7 +15,7 @@
+@@ -14,6 +14,8 @@
+ #define CONFIG_APP_BUILD_BOOTLOADER 1
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
- #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
++#define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 custom sdkconfig"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
+@@ -598,5 +600,5 @@
+ #define CONFIG_ULP_COPROC_ENABLED CONFIG_ESP32_ULP_COPROC_ENABLED
+ #define CONFIG_ULP_COPROC_RESERVE_MEM CONFIG_ESP32_ULP_COPROC_RESERVE_MEM
+ #define CONFIG_WARN_WRITE_STRINGS CONFIG_COMPILER_WARN_WRITE_STRINGS
+-#define CONFIG_ARDUINO_IDF_COMMIT "1b16ef6cfc"
+-#define CONFIG_ARDUINO_IDF_BRANCH "v4.4.2"
++#define CONFIG_ARDUINO_IDF_COMMIT ""
++#define CONFIG_ARDUINO_IDF_BRANCH "feature/fws-1b16ef6cfc-4.4.2"
 diff --git a/tools/esp32/dout_qspi/include/sdkconfig.h b/tools/esp32/dout_qspi/include/sdkconfig.h
-index 24722bc4..c17fc6aa 100644
+index 8813062e..514a7b3c 100644
 --- a/tools/esp32/dout_qspi/include/sdkconfig.h
 +++ b/tools/esp32/dout_qspi/include/sdkconfig.h
-@@ -15,7 +15,7 @@
+@@ -14,6 +14,8 @@
+ #define CONFIG_APP_BUILD_BOOTLOADER 1
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
- #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
++#define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 custom sdkconfig"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
+@@ -598,5 +600,5 @@
+ #define CONFIG_ULP_COPROC_ENABLED CONFIG_ESP32_ULP_COPROC_ENABLED
+ #define CONFIG_ULP_COPROC_RESERVE_MEM CONFIG_ESP32_ULP_COPROC_RESERVE_MEM
+ #define CONFIG_WARN_WRITE_STRINGS CONFIG_COMPILER_WARN_WRITE_STRINGS
+-#define CONFIG_ARDUINO_IDF_COMMIT "1b16ef6cfc"
+-#define CONFIG_ARDUINO_IDF_BRANCH "v4.4.2"
++#define CONFIG_ARDUINO_IDF_COMMIT ""
++#define CONFIG_ARDUINO_IDF_BRANCH "feature/fws-1b16ef6cfc-4.4.2"
+diff --git a/tools/esp32/include/hal/esp32/include/hal/i2s_ll.h b/tools/esp32/include/hal/esp32/include/hal/i2s_ll.h
+index 144ae402..fff68fea 100644
+--- a/tools/esp32/include/hal/esp32/include/hal/i2s_ll.h
++++ b/tools/esp32/include/hal/esp32/include/hal/i2s_ll.h
+@@ -24,6 +24,7 @@
+ 
+ #include <stdbool.h>
+ #include "hal/misc.h"
++#include "hal/assert.h"
+ #include "soc/i2s_periph.h"
+ #include "soc/i2s_struct.h"
+ #include "hal/i2s_types.h"
+@@ -688,22 +689,57 @@ static inline void i2s_ll_rx_enable_msb_shift(i2s_dev_t *hw, bool msb_shift_enab
+  * @brief Set I2S tx chan mode
+  *
+  * @param hw Peripheral I2S hardware instance address.
+- * @param val value to set tx chan mode
+- */
+-static inline void i2s_ll_tx_set_chan_mod(i2s_dev_t *hw, uint32_t val)
+-{
+-    hw->conf_chan.tx_chan_mod = val;
++ * @param chan_fmt The channel format of the TX channel
++ */
++static inline void i2s_ll_tx_set_chan_mod(i2s_dev_t *hw, i2s_channel_fmt_t chan_fmt)
++{
++    switch (chan_fmt) {
++        case I2S_CHANNEL_FMT_ALL_RIGHT:
++            hw->conf_chan.tx_chan_mod = 1;
++            break;
++        case I2S_CHANNEL_FMT_ONLY_RIGHT:
++            hw->conf_chan.tx_chan_mod = 3;
++            break;
++        case I2S_CHANNEL_FMT_ALL_LEFT:
++            hw->conf_chan.tx_chan_mod = 2;
++            break;
++        case I2S_CHANNEL_FMT_ONLY_LEFT:
++            hw->conf_chan.tx_chan_mod = 4;
++            break;
++        case I2S_CHANNEL_FMT_RIGHT_LEFT:
++            hw->conf_chan.tx_chan_mod = 0;
++            break;
++        default:
++            HAL_ASSERT(false);
++    }
+ }
+ 
+ /**
+  * @brief Set I2S rx chan mode
+  *
+  * @param hw Peripheral I2S hardware instance address.
+- * @param val value to set rx chan mode
+- */
+-static inline void i2s_ll_rx_set_chan_mod(i2s_dev_t *hw, uint32_t val)
+-{
+-    hw->conf_chan.rx_chan_mod = val;
++ * @param chan_fmt The channel format of the RX channel
++ * @param is_msb_right Is msb_right enabled, if it does, we need to flip the channel
++ */
++static inline void i2s_ll_rx_set_chan_mod(i2s_dev_t *hw, i2s_channel_fmt_t chan_fmt, bool is_msb_right)
++{
++    switch (chan_fmt) {
++        case I2S_CHANNEL_FMT_ALL_RIGHT:
++            /* fall through */
++        case I2S_CHANNEL_FMT_ONLY_RIGHT:
++            hw->conf_chan.rx_chan_mod = is_msb_right ? 1 : 2;
++            break;
++        case I2S_CHANNEL_FMT_ALL_LEFT:
++            /* fall through */
++        case I2S_CHANNEL_FMT_ONLY_LEFT:
++            hw->conf_chan.rx_chan_mod = is_msb_right ? 2 : 1;
++            break;
++        case I2S_CHANNEL_FMT_RIGHT_LEFT:
++            hw->conf_chan.rx_chan_mod = 0;
++            break;
++        default:
++            HAL_ASSERT(false);
++    }
+ }
+ 
+ /**
 diff --git a/tools/esp32/lib/libapp_update.a b/tools/esp32/lib/libapp_update.a
-index b8697463..c5c63bd0 100644
+index 4469909a..5fbc969e 100644
 Binary files a/tools/esp32/lib/libapp_update.a and b/tools/esp32/lib/libapp_update.a differ
+diff --git a/tools/esp32/lib/libdriver.a b/tools/esp32/lib/libdriver.a
+index 4f70140d..fa9d088e 100644
+Binary files a/tools/esp32/lib/libdriver.a and b/tools/esp32/lib/libdriver.a differ
+diff --git a/tools/esp32/lib/libesp_lcd.a b/tools/esp32/lib/libesp_lcd.a
+index ae6edb93..2d5a9060 100644
+Binary files a/tools/esp32/lib/libesp_lcd.a and b/tools/esp32/lib/libesp_lcd.a differ
+diff --git a/tools/esp32/lib/libesp_system.a b/tools/esp32/lib/libesp_system.a
+index fb9e1767..2cdb36ae 100644
+Binary files a/tools/esp32/lib/libesp_system.a and b/tools/esp32/lib/libesp_system.a differ
+diff --git a/tools/esp32/lib/libhal.a b/tools/esp32/lib/libhal.a
+index f550477e..3ad95b88 100644
+Binary files a/tools/esp32/lib/libhal.a and b/tools/esp32/lib/libhal.a differ
 diff --git a/tools/esp32/qio_qspi/include/sdkconfig.h b/tools/esp32/qio_qspi/include/sdkconfig.h
-index bd963ed8..d9831422 100644
+index 2e5e769a..d8be6e8c 100644
 --- a/tools/esp32/qio_qspi/include/sdkconfig.h
 +++ b/tools/esp32/qio_qspi/include/sdkconfig.h
-@@ -15,7 +15,7 @@
+@@ -14,6 +14,8 @@
+ #define CONFIG_APP_BUILD_BOOTLOADER 1
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
- #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
++#define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 custom sdkconfig"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
+@@ -598,5 +600,5 @@
+ #define CONFIG_ULP_COPROC_ENABLED CONFIG_ESP32_ULP_COPROC_ENABLED
+ #define CONFIG_ULP_COPROC_RESERVE_MEM CONFIG_ESP32_ULP_COPROC_RESERVE_MEM
+ #define CONFIG_WARN_WRITE_STRINGS CONFIG_COMPILER_WARN_WRITE_STRINGS
+-#define CONFIG_ARDUINO_IDF_COMMIT "1b16ef6cfc"
+-#define CONFIG_ARDUINO_IDF_BRANCH "v4.4.2"
++#define CONFIG_ARDUINO_IDF_COMMIT ""
++#define CONFIG_ARDUINO_IDF_BRANCH "feature/fws-1b16ef6cfc-4.4.2"
 diff --git a/tools/esp32/qout_qspi/include/sdkconfig.h b/tools/esp32/qout_qspi/include/sdkconfig.h
-index db029f2c..f1b08101 100644
+index 9ada89e9..35a306e1 100644
 --- a/tools/esp32/qout_qspi/include/sdkconfig.h
 +++ b/tools/esp32/qout_qspi/include/sdkconfig.h
-@@ -15,7 +15,7 @@
+@@ -14,6 +14,8 @@
+ #define CONFIG_APP_BUILD_BOOTLOADER 1
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
- #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
++#define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 custom sdkconfig"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
+@@ -598,5 +600,5 @@
+ #define CONFIG_ULP_COPROC_ENABLED CONFIG_ESP32_ULP_COPROC_ENABLED
+ #define CONFIG_ULP_COPROC_RESERVE_MEM CONFIG_ESP32_ULP_COPROC_RESERVE_MEM
+ #define CONFIG_WARN_WRITE_STRINGS CONFIG_COMPILER_WARN_WRITE_STRINGS
+-#define CONFIG_ARDUINO_IDF_COMMIT "1b16ef6cfc"
+-#define CONFIG_ARDUINO_IDF_BRANCH "v4.4.2"
++#define CONFIG_ARDUINO_IDF_COMMIT ""
++#define CONFIG_ARDUINO_IDF_BRANCH "feature/fws-1b16ef6cfc-4.4.2"
 diff --git a/tools/esp32/sdkconfig b/tools/esp32/sdkconfig
-index 276780e9..42241ce5 100644
+index 009841a3..1414932b 100644
 --- a/tools/esp32/sdkconfig
 +++ b/tools/esp32/sdkconfig
-@@ -32,7 +32,7 @@ CONFIG_APP_COMPILE_TIME_DATE=y
+@@ -31,7 +31,8 @@ CONFIG_APP_BUILD_USE_FLASH_SECTIONS=y
+ CONFIG_APP_COMPILE_TIME_DATE=y
  # CONFIG_APP_EXCLUDE_PROJECT_VER_VAR is not set
  # CONFIG_APP_EXCLUDE_PROJECT_NAME_VAR is not set
- CONFIG_APP_PROJECT_VER_FROM_CONFIG=y
--CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
-+CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
+-# CONFIG_APP_PROJECT_VER_FROM_CONFIG is not set
++CONFIG_APP_PROJECT_VER_FROM_CONFIG=y
++CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 custom sdkconfig"
  CONFIG_APP_RETRIEVE_LEN_ELF_SHA=16
  # end of Application manager
  
+@@ -218,11 +219,6 @@ CONFIG_ARDUINO_SELECTIVE_WiFiProv=y
+ CONFIG_ARDUINO_SELECTIVE_Wire=y
+ # end of Arduino Configuration
+ 
+-#
+-# Arduino TinyUSB
+-#
+-# end of Arduino TinyUSB
+-
+ #
+ # Compiler options
+ #
+diff --git a/tools/versions.txt b/tools/versions.txt
+index 8f31cb12..cfe43de5 100644
+--- a/tools/versions.txt
++++ b/tools/versions.txt
+@@ -1,5 +1,5 @@
+ esp-idf: v4.4.2 1b16ef6cfc
+-arduino: feature/fws-custom-55d608e3-2.0.5 5d30ed82
++arduino: b0054d26
+ esp_littlefs: v1.5.0 485a037
+ esp-dl: master f3006d7
+ espressif__esp-dsp: 401faf8
