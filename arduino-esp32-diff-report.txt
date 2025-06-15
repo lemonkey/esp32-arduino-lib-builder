@@ -1,68 +1,68 @@
 diff --git a/tools/esp32/dio_qspi/include/sdkconfig.h b/tools/esp32/dio_qspi/include/sdkconfig.h
-index 9c609e11..1c08cd6e 100644
+index 1c08cd6e..c8132e28 100644
 --- a/tools/esp32/dio_qspi/include/sdkconfig.h
 +++ b/tools/esp32/dio_qspi/include/sdkconfig.h
 @@ -15,7 +15,7 @@
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
  #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v2"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
+-#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
 diff --git a/tools/esp32/dout_qspi/include/sdkconfig.h b/tools/esp32/dout_qspi/include/sdkconfig.h
-index ee668547..24722bc4 100644
+index 24722bc4..c17fc6aa 100644
 --- a/tools/esp32/dout_qspi/include/sdkconfig.h
 +++ b/tools/esp32/dout_qspi/include/sdkconfig.h
 @@ -15,7 +15,7 @@
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
  #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v2"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
+-#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
 diff --git a/tools/esp32/lib/libapp_update.a b/tools/esp32/lib/libapp_update.a
-index 576b8a6e..b8697463 100644
+index b8697463..c5c63bd0 100644
 Binary files a/tools/esp32/lib/libapp_update.a and b/tools/esp32/lib/libapp_update.a differ
 diff --git a/tools/esp32/qio_qspi/include/sdkconfig.h b/tools/esp32/qio_qspi/include/sdkconfig.h
-index 26bed978..bd963ed8 100644
+index bd963ed8..d9831422 100644
 --- a/tools/esp32/qio_qspi/include/sdkconfig.h
 +++ b/tools/esp32/qio_qspi/include/sdkconfig.h
 @@ -15,7 +15,7 @@
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
  #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v2"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
+-#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
 diff --git a/tools/esp32/qout_qspi/include/sdkconfig.h b/tools/esp32/qout_qspi/include/sdkconfig.h
-index 5c2639e7..db029f2c 100644
+index db029f2c..f1b08101 100644
 --- a/tools/esp32/qout_qspi/include/sdkconfig.h
 +++ b/tools/esp32/qout_qspi/include/sdkconfig.h
 @@ -15,7 +15,7 @@
  #define CONFIG_APP_BUILD_USE_FLASH_SECTIONS 1
  #define CONFIG_APP_COMPILE_TIME_DATE 1
  #define CONFIG_APP_PROJECT_VER_FROM_CONFIG 1
--#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v2"
-+#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
+-#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
++#define CONFIG_APP_PROJECT_VER "GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
  #define CONFIG_APP_RETRIEVE_LEN_ELF_SHA 16
  #define CONFIG_BOOTLOADER_OFFSET_IN_FLASH 0x1000
  #define CONFIG_BOOTLOADER_COMPILER_OPTIMIZATION_SIZE 1
 diff --git a/tools/esp32/sdkconfig b/tools/esp32/sdkconfig
-index 8b7b1cf7..276780e9 100644
+index 276780e9..42241ce5 100644
 --- a/tools/esp32/sdkconfig
 +++ b/tools/esp32/sdkconfig
 @@ -32,7 +32,7 @@ CONFIG_APP_COMPILE_TIME_DATE=y
  # CONFIG_APP_EXCLUDE_PROJECT_VER_VAR is not set
  # CONFIG_APP_EXCLUDE_PROJECT_NAME_VAR is not set
  CONFIG_APP_PROJECT_VER_FROM_CONFIG=y
--CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v2"
-+CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
+-CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v3"
++CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 platformio wait loop test"
  CONFIG_APP_RETRIEVE_LEN_ELF_SHA=16
  # end of Application manager
  
