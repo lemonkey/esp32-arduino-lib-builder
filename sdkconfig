@@ -32,7 +32,7 @@ CONFIG_APP_COMPILE_TIME_DATE=y
 # CONFIG_APP_EXCLUDE_PROJECT_VER_VAR is not set
 # CONFIG_APP_EXCLUDE_PROJECT_NAME_VAR is not set
 CONFIG_APP_PROJECT_VER_FROM_CONFIG=y
-CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime"
+CONFIG_APP_PROJECT_VER="GIIESP32Arduino 1.0.0-alpha.4 timed sdkconfig.sh printElapsedTime v2"
 CONFIG_APP_RETRIEVE_LEN_ELF_SHA=16
 # end of Application manager
 
