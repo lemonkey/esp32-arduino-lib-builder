@@ -1,5 +1,5 @@
 esp-idf: v4.4.2 1b16ef6cfc
-arduino: a16f5e526
+arduino: 8d124c2f6
 esp_littlefs: v1.5.0 485a037
 esp-dl: master f3006d7
 espressif__esp-dsp: 401faf8
